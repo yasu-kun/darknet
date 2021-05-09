@@ -149,17 +149,55 @@ if __name__ == "__main__":
     #meta = load_meta("cfg/imagenet1k.data")
     #r = classify(net, meta, im)
     #print r[:10]
+    import csv
+    import os
     
     net = load_net("../cfg/yolov3.cfg".encode('ascii'),"../yolov3.weights".encode('ascii'), 0)
     meta = load_meta("../cfg/coco.data".encode('ascii'))
     #r = detect(net, meta, "../data/dog.jpg".encode('ascii'))
-    r = detect(net, meta, "/content/drive/MyDrive/code/yolo/extract_frame/frame_0001.jpg".encode('ascii'))
-    #/content/drive/MyDrive/code/yolo/extract_frame/frame_0001.jpg
-    for kekka in r:
-        print('class_name=',kekka[0].decode('ascii'))
-        print('confidence=',kekka[1])    
-        print('box=',kekka[2]) 
     
+    #/content/drive/MyDrive/code/op_workspace/openpose_old/datas/movies
+    pic_path = '/content/drive/MyDrive/code/yolo/extract_frame/'
+    pic_list = os.listdir(path=pic_path)
+    
+    #print(sorted(pic_list)[:10])
+
+    for i in sorted(pic_list)[:3]:
+    
+        r = detect(net, meta, "/content/drive/MyDrive/code/yolo/extract_frame/{}".format(i).encode('ascii'))
+    #/content/drive/MyDrive/code/yolo/extract_frame/frame_0001.jpg
+        for kekka in r:
+            if kekka[0].decode('ascii')=='person':
+    #    print('class_name=',kekka[0].decode('ascii'))
+    #    print('confidence=',kekka[1])    
+    #    print('box=',kekka[2][0])  
+
+                if os.path.exists('/content/drive/MyDrive/code/yolo/raw.csv')==True:
+                    with open('/content/drive/MyDrive/code/yolo/raw.csv', 'a') as f:
+                        writer = csv.writer(f)
+                        writer.writerow([kekka[1],kekka[2][0],kekka[2][1],kekka[2][2],kekka[2][3]])
+                else:  
+                    with open('/content/drive/MyDrive/code/yolo/raw.csv', 'w') as f:
+                        writer = csv.writer(f)
+                        writer.writerow([kekka[1],kekka[2][0],kekka[2][1],kekka[2][2],kekka[2][3]])
+
+                if os.path.exists('/content/drive/MyDrive/code/yolo/raw_box.txt')==True:
+                    f = open('/content/drive/MyDrive/code/yolo/raw_box.txt', 'a')
+                    f.write('{} {} {} {}\n'.format(kekka[2][0],kekka[2][1],kekka[2][2],kekka[2][3]))
+                    f.close()
+                else:
+                    f = open('/content/drive/MyDrive/code/yolo/raw_box.txt', 'w')
+                    f.write('{} {} {} {}\n'.format(kekka[2][0],kekka[2][1],kekka[2][2],kekka[2][3]))
+                    f.close()
+
+                if os.path.exists('/content/drive/MyDrive/code/yolo/yolo_box.txt')==True:
+                    f = open('/content/drive/MyDrive/code/yolo/yolo_box.txt', 'a')
+                    f.write('{} {} {} {}\n'.format(kekka[2][0]/1920,kekka[2][1]/1080,kekka[2][2]/1920,kekka[2][3]/1080))
+                    f.close()
+                else:
+                    f = open('/content/drive/MyDrive/code/yolo/yolo_box.txt', 'w')
+                    f.write('{} {} {} {}\n'.format(kekka[2][0]/1920,kekka[2][1]/1080,kekka[2][2]/1920,kekka[2][3]/1080))
+                    f.close()
     #net = load_net("../cfg/tiny-yolo.cfg", "", 0)
     #meta = load_meta("../cfg/coco.data")
     #r = detect(net, meta, "data/dog.jpg")
