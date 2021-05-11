@@ -162,7 +162,7 @@ if __name__ == "__main__":
     
     #print(sorted(pic_list)[:10])
 
-    for i in sorted(pic_list)[:3]:
+    for i in sorted(pic_list):
     
         r = detect(net, meta, "/content/drive/MyDrive/code/yolo/extract_frame/{}".format(i).encode('ascii'))
     #/content/drive/MyDrive/code/yolo/extract_frame/frame_0001.jpg
